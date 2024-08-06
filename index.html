@@ -8,91 +8,67 @@
         body {
             margin: 0;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #000;
         }
         #viewer {
-            width: 100%;
-            height: 100%;
-            background-color: #000000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: grab;
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        #viewer:active {
-            cursor: grabbing;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
         }
     </style>
 </head>
 <body>
     <div id="viewer"></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/panolens@0.10.6/build/panolens.min.js"></script>
     <script>
-        const images = [];
-        for (let i = 1; i <= 24; i++) {
-            const num = i.toString().padStart(2, '0');
-            images.push(`https://alecb102.github.io/360-auto/KWID_PH2_360_${num}.png`);
-        }
-
-        let currentImage = 0;
-        const viewer = document.getElementById('viewer');
-        let isDragging = false;
-        let startX = 0;
-        let currentX = 0;
-
-        function showImage(index) {
-            viewer.style.backgroundImage = `url(${images[index]})`;
-        }
-
-        function updateImage() {
-            const deltaX = currentX - startX;
-            const imageIndex = Math.floor(deltaX / 10) % images.length;
-            currentImage = (imageIndex + images.length) % images.length;
-            showImage(currentImage);
-        }
-
-        function animate() {
-            if (isDragging) {
-                updateImage();
-            }
-            requestAnimationFrame(animate);
-        }
-
-        viewer.addEventListener('mousedown', (event) => {
-            isDragging = true;
-            startX = event.clientX;
-            viewer.addEventListener('mousemove', onMouseMove);
+        const viewer = new PANOLENS.Viewer({
+            container: document.querySelector('#viewer'),
+            controlBar: false,
+            autoRotate: true,
+            autoRotateSpeed: 0.5,
+            cameraFov: 75
         });
 
-        function onMouseMove(event) {
-            currentX = event.clientX;
+        const imageUrls = [
+            'KWID_PH2_360_01.png',
+            'KWID_PH2_360_02.png',
+            'KWID_PH2_360_03.png',
+            'KWID_PH2_360_04.png',
+            'KWID_PH2_360_05.png',
+            'KWID_PH2_360_06.png',
+            'KWID_PH2_360_07.png',
+            'KWID_PH2_360_08.png',
+            'KWID_PH2_360_09.png',
+            'KWID_PH2_360_10.png',
+            'KWID_PH2_360_11.png',
+            'KWID_PH2_360_12.png',
+            'KWID_PH2_360_13.png',
+            'KWID_PH2_360_14.png',
+            'KWID_PH2_360_15.png',
+            'KWID_PH2_360_16.png',
+            'KWID_PH2_360_17.png',
+            'KWID_PH2_360_18.png',
+            'KWID_PH2_360_19.png',
+            'KWID_PH2_360_20.png',
+            'KWID_PH2_360_21.png',
+            'KWID_PH2_360_22.png',
+            'KWID_PH2_360_23.png',
+            'KWID_PH2_360_24.png'
+        ];
+
+        const panorama = new PANOLENS.ImagePanorama(imageUrls[0]);
+
+        viewer.add(panorama);
+
+        let currentIndex = 0;
+        function changeImage() {
+            currentIndex = (currentIndex + 1) % imageUrls.length;
+            panorama.load(imageUrls[currentIndex]);
         }
 
-        viewer.addEventListener('mouseup', () => {
-            isDragging = false;
-            viewer.removeEventListener('mousemove', onMouseMove);
-        });
-
-        viewer.addEventListener('mouseleave', () => {
-            isDragging = false;
-            viewer.removeEventListener('mousemove', onMouseMove);
-        });
-
-        showImage(currentImage);
-        animate();
-
-        // Código para controlar la visualización interior
-        viewer.addEventListener('dblclick', () => {
-            alert('Aquí se mostraría el interior del coche.');
-        });
+        setInterval(changeImage, 100);
     </script>
 </body>
 </html>
+
